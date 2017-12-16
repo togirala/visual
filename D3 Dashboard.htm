@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)http://localhost:8888/D3/dashboard.html#firstPage -->
+<html lang="en" class="fp-enabled" style="overflow: hidden; height: 100%;"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>D3 Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="./D3 Dashboard_files/fullPage.css">
+	<link rel="stylesheet" type="text/css" href="./D3 Dashboard_files/examples.css">
+    <link href="./D3 Dashboard_files/css" rel="stylesheet">
+    <script src="./D3 Dashboard_files/jquery.min.js"></script>
+    <script src="./D3 Dashboard_files/easings.min.js"></script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+    </style>
+    
+    <!-- This following line is only necessary in the case of using the option `scrollOverflow:true` -->
+    <script type="text/javascript" src="./D3 Dashboard_files/scrolloverflow.min.js"></script>
+    
+    <script type="text/javascript" src="./D3 Dashboard_files/fullPage.js"></script>
+    <script type="text/javascript" src="./D3 Dashboard_files/examples.js"></script>
+    <script type="text/javascript">
+		$(document).ready(function() {
+			$('#fullpage').fullpage({
+			  sectionsColor: ['whitesmoke', 'whitesmoke', 'whitesmoke', 'whitesmoke', 'whitesmoke'],
+			  anchors: ['firstPage', 'secondPage', 'thirdPage', 'fourthPage', 'lastPage'],
+			  menu: '#menu',
+			  continuousVertical: true
+			});
+		});
+	</script>
+</head>
+<body class="fp-viewing-firstPage" style="overflow: hidden; height: 100%;">
+    <ul id="menu">
+        <li data-menuanchor="firstPage" class="active"><a href="http://localhost:8888/D3/dashboard.html#firstPage">US Map</a></li>
+        <li data-menuanchor="secondPage"><a href="http://localhost:8888/D3/dashboard.html#secondPage">Killings &amp; Injured</a></li>
+        <li data-menuanchor="thirdPage"><a href="http://localhost:8888/D3/dashboard.html#thirdPage">Cause &amp; Race</a></li>
+        <li data-menuanchor="fourthPage"><a href="http://localhost:8888/D3/dashboard.html#fourthPage">Days, Dates &amp; Months</a></li>
+        <li data-menuanchor="lastPage" class=""><a href="http://localhost:8888/D3/dashboard.html#lastPage">US Map with Details</a></li>
+    </ul>
+    
+    <div id="fullpage" class="fullpage-wrapper" style="height: 100%; position: relative; touch-action: none; transform: translate3d(0px, 0px, 0px); transition: all 700ms ease;">
+        <div class="section fp-section fp-table active fp-completely" id="section0" data-anchor="firstPage" style="height: 607px; background-color: whitesmoke;"><div class="fp-tableCell" style="height: 607px;">
+            <object type="text/html" data="./D3 Dashboard_files/US Map with Shooting Bubbles.html" style="width:90%; height:90%; margin-top:5%;">
+            </object>
+        </div></div>
+        <div class="section fp-section fp-table" id="section1" data-anchor="secondPage" style="height: 607px; background-color: whitesmoke;"><div class="fp-tableCell" style="height: 607px;">
+            <object type="text/html" data="./D3 Dashboard_files/Killing vs Injured.html" style="width:90%; height:90%; margin-top:5%;">
+            </object>
+        </div></div>
+        <div class="section fp-section fp-table" id="section2" data-anchor="thirdPage" style="height: 607px; background-color: whitesmoke;"><div class="fp-tableCell" style="height: 607px;">
+            <object type="text/html" data="./D3 Dashboard_files/Race vs Cause.html" style="width:90%; height:90%; margin-top:10%;">
+            </object>
+        </div></div>
+        <div class="section fp-section fp-table" id="section3" data-anchor="fourthPage" style="height: 607px; background-color: whitesmoke;"><div class="fp-tableCell" style="height: 607px;">
+            <object type="text/html" data="./D3 Dashboard_files/Sortable_bar_chart.html" style="width:85%; height:80%; margin-top:5%;">
+            </object>
+        </div></div>
+        <div class="section fp-section fp-table" id="section4" data-anchor="lastPage" style="height: 607px; background-color: whitesmoke;"><div class="fp-tableCell" style="height: 607px;">
+            <object type="text/html" data="./D3 Dashboard_files/US mass shootings pointer.html" style="width:90%; height:90%; margin-top:5%;">
+            </object>
+        </div></div>
+    </div>
+
+</body><link id="lite-css-list" rel="stylesheet" type="text/css"><style id="custom-css-list" type="text/css"></style></html>

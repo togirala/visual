@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Area Chart</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Slabo+27px" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.microsoft.com/ajax/jQuery/jquery-1.4.2.min.js"></script>
+    <script src="Data/amchart.js"></script>
+    <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        #chartdiv {
+            width		: 100%;
+            height		: 490px;
+            font-size	: 11px;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+    <script>
+        var chart = AmCharts.makeChart("chartdiv", {
+            "type": "serial",
+            "theme": "light",
+            "marginRight":30,
+            "legend": {
+                "equalWidths": false,
+                "periodValueText": "total: [[value.sum]]",
+                "position": "top",
+                "valueAlign": "left",
+                "valueWidth": 100
+            },
+            "dataProvider": [{
+                "year": 1966,
+                "killings": 22,
+                "Injured": 33
+            }, {
+                "year": 1967,
+                "killings": 0,
+                "Injured": 0
+            }, {
+                "year": 1968,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1969,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1970,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1971,
+                "killings": 2,
+                "Injured": 4
+            },{
+                "year": 1972,
+                "killings": 10,
+                "Injured": 13
+            },{
+                "year": 1973,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1974,
+                "killings": 4,
+                "Injured": 10
+            },{
+                "year": 1975,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1976,
+                "killings": 8,
+                "Injured": 9
+            },{
+                "year": 1977,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1978,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1979,
+                "killings": 4,
+                "Injured": 14
+            },{
+                "year": 1980,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1981,
+                "killings": 0,
+                "Injured": 0
+            },{
+                "year": 1982,
+                "killings": 10,
+                "Injured": 5
+            },{
+                "year": 1983,
+                "killings": 14,
+                "Injured": 4
+            }, {
+                "year": 1984,
+                "killings": 31,
+                "Injured": 32
+            },{
+                "year": 1985,
+                "killings": 3,
+                "Injured": 4
+            },{
+                "year": 1986,
+                "killings": 17,
+                "Injured": 13
+            },{
+                "year": 1987,
+                "killings": 6,
+                "Injured": 14
+            },{
+                "year": 1988,
+                "killings": 17,
+                "Injured": 28
+            },{
+                "year": 1989,
+                "killings": 19,
+                "Injured": 43
+            },{
+                "year": 1990,
+                "killings": 12,
+                "Injured": 6
+            },{
+                "year": 1991,
+                "killings": 47,
+                "Injured": 26
+            },{
+                "year": 1992,
+                "killings": 11,
+                "Injured": 20
+            },{
+                "year": 1993,
+                "killings": 29,
+                "Injured": 50
+            },{
+                "year": 1994,
+                "killings": 12,
+                "Injured": 31
+            },{
+                "year": 1995,
+                "killings": 14,
+                "Injured": 4
+            },{
+                "year": 1996,
+                "killings": 12,
+                "Injured": 2
+            },{
+                "year": 1997,
+                "killings": 18,
+                "Injured": 21
+            },{
+                "year": 1998,
+                "killings": 15,
+                "Injured": 44
+            },{
+                "year": 1999,
+                "killings": 45,
+                "Injured": 56
+            },{
+                "year": 2000,
+                "killings": 7,
+                "Injured": 0
+            },{
+                "year": 2001,
+                "killings": 8,
+                "Injured": 17
+            },{
+                "year": 2002,
+                "killings": 7,
+                "Injured": 3
+            }, {
+                "year": 2003,
+                "killings": 15,
+                "Injured": 10
+            }, {
+                "year": 2004,
+                "killings": 11,
+                "Injured": 9
+            }, {
+                "year": 2005,
+                "killings": 21,
+                "Injured": 13
+            }, {
+                "year": 2006,
+                "killings": 30,
+                "Injured": 21
+            }, {
+                "year": 2007,
+                "killings": 65,
+                "Injured": 61
+            }, {
+                "year": 2008,
+                "killings": 28,
+                "Injured": 30
+            }, {
+                "year": 2009,
+                "killings": 69,
+                "Injured": 49
+            }, {
+                "year": 2010,
+                "killings": 9,
+                "Injured": 5
+            }, {
+                "year": 2011,
+                "killings": 29,
+                "Injured": 37
+            },{
+                "year": 2012,
+                "killings": 99,
+                "Injured": 111
+            },{
+                "year": 2013,
+                "killings": 76,
+                "Injured": 32
+            },{
+                "year": 2014,
+                "killings": 45,
+                "Injured": 76
+            },{
+                "year": 2015,
+                "killings": 226,
+                "Injured": 200
+            },{
+                "year": 2016,
+                "killings": 193,
+                "Injured": 277
+            }, {
+                "year": 2017,
+                "killings": 113,
+                "Injured": 558
+            }, {
+                "year": 2018,
+                "killings": 0,
+                "Injured": 0
+            }],
+            "valueAxes": [{
+                "stackType": "regular",
+                "gridAlpha": 0.07,
+                "position": "left",
+                "title": "Mass Shooting Victims"
+            }],
+            "graphs": [{
+                "balloonText": "<p>Killings : <span style='font-size:14px; color:#000000;'><b>[[value]]</b></span></p>",
+                "fillAlphas": 0.6,
+                "lineAlpha": 0.4,
+                "title": "Killings",
+                "valueField": "killings"
+            }, {
+                "balloonText": "<p>Injured : <span style='font-size:14px; color:#000000;'><b>[[value]]</b></span></p>",
+                "fillAlphas": 0.6,
+                "lineAlpha": 0.4,
+                "title": "Injured",
+                "valueField": "Injured"
+            }],
+            "plotAreaBorderAlpha": 0,
+            "marginTop": 10,
+            "marginLeft": 0,
+            "marginBottom": 0,
+            "chartScrollbar": {},
+            "chartCursor": {
+                "cursorAlpha": 0
+            },
+            "categoryField": "year",
+            "categoryAxis": {
+                "startOnAxis": true,
+                "axisColor": "#DADADA",
+                "gridAlpha": 0.07,
+                "title": "Years",
+                // "guides": [{
+                //     category: "2001",
+                //     toCategory: "2003",
+                //     lineColor: "#CC0000",
+                //     lineAlpha: 1,
+                //     fillAlpha: 0.2,
+                //     fillColor: "#CC0000",
+                //     dashLength: 2,
+                //     inside: true,
+                //     labelRotation: 90,
+                //     label: "fines for speeding increased"
+                // }, {
+                //     category: "2007",
+                //     lineColor: "#CC0000",
+                //     lineAlpha: 1,
+                //     dashLength: 2,
+                //     inside: true,
+                //     labelRotation: 90,
+                //     label: "motorcycle fee introduced"
+                // }]
+            }
+        });
+    </script>
+</head>
+<body>
+    <h2 class="center">Killings & injury trend of US mass shootings in last 50 years</h2>
+    <div id="chartdiv"></div>
+</body>
+</html>								

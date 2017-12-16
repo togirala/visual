@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>US Mass Shootings Map</title>
+    <meta charset="utf-8" />
+    <link 
+        rel="stylesheet" 
+        href="http://cdn.leafletjs.com/leaflet-0.7/leaflet.css"
+    />
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans|Slabo+27px" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
+        integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
+    <style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+        }
+        .alignRight {
+            text-align: right;
+        }
+        .dropbtn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        /* The container <div> - needed to position the dropdown content */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        /* Dropdown Content (Hidden by Default) */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        
+        /* Links inside the dropdown */
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        /* Change color of dropdown links on hover */
+        .dropdown-content a:hover {background-color: #f1f1f1}
+        
+        /* Show the dropdown menu on hover */
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        
+        /* Change the background color of the dropdown button when the dropdown content is shown */
+        .dropdown:hover .dropbtn {
+            background-color: #3e8e41;
+        }
+    </style>
+</head>
+<body>
+    <div id="map" style="width:1035px; height: 575px">
+    </div>
+
+    <script src="data/leaflet.js"></script>
+    <script>
+
+	var planes = [
+        [1966,"Austin","Texas",30.1988873,-97.84415949,"Rose-Mar College of Beauty",5,1,"Terrorism","European","Male"],
+        [1966,"Mesa","Arizona",33.52268696,-111.8163202,"University of Texas at Austin",17,32,"Terrorism","European","Male"],
+        [1971,"Spokane","Washington",47.67367375,-117.4159843,"St. Aloysius Church",2,4,"Terrorism","European","Male"],
+        [1972,"New Orleans","Louisiana",30.3687242,-89.93147412,"New Orleans Police Shootings",10,13,"Psycho","Black","Male"],
+        [1974,"Chicago","Illinois",41.57928045,-87.68818145,"Olean High School",3,7,"Terrorism","European","Male"],
+        [1974,"Olean","New York",42.08185369,-78.43213922,"Clara Barton Elementary School",1,3,"Anger","Unknown","Male"],
+        [1976,"Fullerton","California",33.88404244,-117.92785,"Cal State Fullerton",7,2,"Terrorism","European","Male"],
+        [1976,"Los Angeles","California",34.37622092,-118.5399542,"Los Angeles Computer Learning Center",1,7,"Anger","European","Male"],
+        [1979,"Columbia","South Carolina",34.05098834,-80.82077527,"University of South Carolina",2,5,"Anger","Black","Male"],
+        [1979,"San Diego","California",32.86357277,-117.1281628,"Grover Cleveland Elementary School",2,9,"Terrorism","European","Female"],
+        [1982,"Las Vegas","Nevada",36.48931923,-115.3264875,"Welding shop in Miami",9,3,"Psycho","European","Male"],
+        [1982,"Miami","Florida",25.79653943,-80.20840397,"Valley High School",1,2,"Anger","European","Male"],
+        [1983,"Johnston","South Carolina",33.83272887,-81.8051584,"Johnston Post Office",1,3,"Anger","European","Male"],
+        [1983,"Seattle","Washington",47.52199575,-122.323646,"Wah Mee Club in Seattle",13,1,"Terrorism","Asian","Male"],
+        [1984,"Dallas","Texas",32.89480596,-96.76631094,"McDonald's restaurant in San Ysidro",22,19,"Psycho","European","Male"],
+        [1984,"Los Angeles","California",34.27622092,-118.5399542,"Ianni's Club in Dallas",6,1,"Revenge","European","Male"],
+        [1984,"San Ysidro","California",32.555556,-117.047656,"49th Street Elementary School",3,12,"Terrorism","Black","Male"],
+        [1985,"Atlanta","Georgia",33.9429969,-84.4231328,"Atlanta Post Office",2,1,"Anger","Black","Male"],
+        [1985,"Goddard","Kansas",37.67129418,-97.55070476,"Goddard Junior High School",1,3,"Anger","European","Male"],
+        [1986,"Brooklyn","New York",40.679276,-73.939513,"Fergus County High School",1,3,"Frustration","European","Male"],
+        [1986,"Edmond","Oklahoma",35.66889223,-97.41438792,"Post office in Edmond, Oklahoma",15,6,"Anger","European","Male"],
+        [1986,"Lewistown","Montana",47.03740653,-109.4844918,"New York Technical College",1,4,"Revenge","Black","Male"],
+        [1987,"Palm Bay","Florida",27.98388983,-80.66662713,"Palm Bay Shopping Centers",6,14,"Psycho","European","Male"],
+        [1988,"Chicago","Illinois",41.47928045,-87.68818145,"New Orleans Downtown Post Office",0,4,"Anger","Unknown","Male"],
+        [1988,"Greenwood","South Carolina",34.1928952,-82.15355508,"Oakland Elementary School",2,9,"Psycho","European","Male"],
+        [1988,"New Orleans","Louisiana",30.2687242,-89.93147412,"Comet Auto Parts and Montefiore School",5,2,"Terrorism","Black","Male"],
+        [1988,"Pinellas Park","Florida",27.84887061,-82.71058,"Hubbard Woods Elementary School",2,7,"Terrorism","European","Female"],
+        [1988,"Sunnyvale","California",37.38344257,-122.0256185,"Electromagnetic Systems Laboratory (ESL)",7,4,"Revenge","European","Male"],
+        [1988,"Winnetka","Illinois",42.10648807,-87.74211141,"Pinellas Park High School",1,2,"Frustration","European","Male"],
+        [1989,"Escondido","California",33.13439925,-117.0722528,"Standard Gravure Corporation",9,12,"Frustration","European","Male"],
+        [1989,"Louisville","Kentucky",38.249432,-85.726243,"Orange Glenn Post Office",4,1,"Psycho","European","Male"],
+        [1989,"Stockton","California",37.96631812,-121.3018775,"Cleveland Elementary School",6,30,"Terrorism","European","Male"],
+        [1990,"Jacksonville","Florida",30.33216122,-81.67576993,"GMAC Loan Office",12,6,"Psycho","Black","Male"],
+        [1991,"Iowa City","Iowa",41.65589405,-91.53117986,"Royal Oak Post Office",5,5,"Unemployement","European","Male"],
+        [1991,"Killeen","Texas",31.47925506,-97.73392317,"University of Iowa",6,1,"Frustration","Asian","Male"],
+        [1991,"Phoenix","Arizona",33.87145875,-112.0904854,"Luby's Cafeteria in Killeen, Texas",24,20,"Unemployement","European","Male"],
+        [1991,"Ridgewood","New Jersey",40.98213277,-74.11264731,"Ridgewood Post Office",3,0,"Revenge","Black","Male"],
+        [1991,"Royal Oak","Michigan",42.50840203,-83.15387427,"Wat Promkunaram Buddhist Temple",9,0,"Unemployement","Asian","Male"],
+        [1992,"Amarillo","Texas",35.18322484,-101.8805688,"Simon's Rock College of Bard",2,4,"Anger","Asian","Male"],
+        [1992,"Great Barrington","Massachusetts",42.19358268,-73.36216339,"Schuyler County Office Building",5,0,"Frustration","European","Male"],
+        [1992,"Olivehurst","California",39.08174985,-121.5549539,"Palo Duro High School",0,6,"Anger","Unknown","Male"],
+        [1992,"Watkins Glen","New York",42.38013875,-76.86724659,"Lindhurst High School",4,10,"Frustration","European","Male"],
+        [1993,"Aurora","Colorado",39.8089293,-104.7871863,"Chelsea High School",1,2,"Anger","European","Male"],
+        [1993,"Chelsea","Michigan",42.31319376,-84.01868108,"Chuck E. Cheese in Aurora",4,1,"Unemployement","Black","Male"],
+        [1993,"Dana Point","California",33.47316083,-117.696399,"Long Island Rail Road Commuter Train",6,19,"Psycho","Black","Male"],
+        [1993,"Dearborn","Michigan",42.31269522,-83.21293244,"Central Middle School",1,4,"Frustration","European","Male"],
+        [1993,"Fayetteville","North Carolina",35.07997086,-79.03796125,"Luigi's Restaurant in Fayetteville",4,8,"Anger","European","Male"],
+        [1993,"Garden City","New York",40.72662266,-73.644712,"Weber State University",1,3,"Frustration","Asian","Male"],
+        [1993,"Ogden","Utah",41.2281367,-111.9675317,"Offices of Pettit & Martin in San Francisco",9,6,"Frustration","European","Male"],
+        [1993,"San Francisco","California",37.85457839,-122.4424343,"Dearborn Post Office",2,2,"Frustration","Unknown","Male"],
+        [1993,"Sheridan","Wyoming",44.79051074,-106.9599165,"Dana Point Post Office",1,5,"Psycho","European","Male"],
+        [1994,"Brookline","Massachusetts",42.32427392,-71.14080012,"Massachusetts Abortion Clinic",2,5,"Terrorism","European","Male"],
+        [1994,"Fairchild Air Force Base","Washington",47.618456,-117.644099,"Wickliffe Middle School",1,3,"Psycho","European","Male"],
+        [1994,"Union","Kentucky",38.95130818,-84.67066339,"Fairchild Air Force Base Hospital",5,23,"Anger","European","Male"],
+        [1994,"Wickliffe","Ohio",41.60713735,-81.46902046,"Residence in Union, Kentucky",4,0,"Psycho","European","Male"],
+        [1995,"Chapel Hill","North Carolina",35.82681467,-79.03850407,"Richland High School",2,1,"Anger","European","Male"],
+        [1995,"Corpus Christi","Texas",27.73907518,-97.43073352,"Walter Rossler Company",6,0,"Anger","Unknown","Male"],
+        [1995,"Lynnville","Tennessee",35.37810374,-87.00610559,"Montclair Post Office",4,1,"Unemployement","European","Male"],
+        [1995,"Montclair","New Jersey",40.826184,-74.20862,"Downtown Chapel Hill",2,2,"Psycho","European","Male"],
+        [1996,"Fort Lauderdale","Florida",26.1223084,-80.1433786,"San Diego State University",3,0,"Anger","European","Male"],
+        [1996,"Moses Lake","Washington",47.12189424,-119.2750699,"Fort Lauderdale Revenge shooting",6,1,"Revenge","Black","Male"],
+        [1996,"San Diego","California",32.76357277,-117.1281628,"Frontier Junior High School",3,1,"Frustration","European","Male"],
+        [1997,"Aiken","South Carolina",33.47524551,-81.72595949,"Milwaukee Post Office",2,2,"Anger","Black","Male"],
+        [1997,"Bethel","Alaska",60.79053882,-161.7927517,"Caltrans Maintenance Yard",5,2,"Unemployement","Other","Male"],
+        [1997,"Milwaukee","Wisconsin",43.16420322,-87.96724385,"Heath High School",3,5,"Psycho","European","Male"],
+        [1997,"Orange","California",33.78935598,-117.820412,"Pearl High School",2,7,"Psycho","European","Male"],
+        [1997,"Pearl","Mississippi",32.27492783,-90.09470655,"R.E. Phelon Company",4,3,"Unemployement","Black","Male"],
+        [1997,"West Paducah","Kentucky",37.08506,-88.74422,"Bethel Regional High School",2,2,"Frustration","European","Male"],
+        [1998,"Edinboro","Pennsylvania",41.87617136,-80.12459632,"Riverside City Hall",0,6,"Terrorism","Black","Male"],
+        [1998,"Jonesboro","Arkansas",35.8209895,-90.6682606,"Thurston High School",4,25,"Psycho","European","Male"],
+        [1998,"Newington","Connecticut",41.68700845,-72.73083927,"Parker Middle School Dance",1,3,"Frustration","European","Male"],
+        [1998,"Riverside","California",33.93814348,-117.3948409,"Westside Middle School killings",5,10,"Anger","White","Male"],
+        [1998,"Springfield","Oregon",44.05489698,-123.0075562,"Connecticut State Lottery Headquarters",5,0,"Anger","European","Male"],
+        [1999,"Atlanta","Georgia",33.8429969,-84.4231328,"Radisson Bay Harbor Inn",5,3,"Frustration","Other","Male"],
+        [1999,"Conyers","Georgia",33.66086267,-84.02688527,"Fort Gibson Middle School",0,4,"Frustration","European","Male"],
+        [1999,"Fort Gibson","Oklahoma",35.77669911,-95.25996596,"Xerox killings",7,0,"Frustration","Asian","Male"],
+        [1999,"Fort Worth","Texas",32.74802142,-97.31305148,"Wedgwood Baptist Church",8,7,"Terrorism","European","Male"],
+        [1999,"Honolulu","Hawaii",21.3255125,-157.8473055,"Offices of All-Tech Investment Group and Momentum Securities",10,12,"Psycho","European","Male"],
+        [1999,"Littleton","Colorado",39.59358263,-105.0152112,"Heritage High School",0,6,"Frustration","European","Male"],
+        [1999,"Tampa","Florida",27.86601861,-82.44503769,"Columbine High School",15,24,"Terrorism","European","Male"],
+        [2000,"Wakefield","Massachusetts",42.506484,-71.0728306,"Wakefield massacre",7,0,"Frustration","White","Male"],
+        [2001," San Diego","California",32.86357277,-117.1281628,"Santana High School",2,13,"Terrorism","European","Male"],
+        [2001,"Melrose Park","Illinois",41.90289602,-87.8643021,"Navistar International",6,4,"Unemployement","Black","Male"],
+        [2002,"Grundy","Virginia",37.27537712,-82.09877234,"University of Arizona College of Nursing",4,0,"Frustration","Other","Male"],
+        [2002,"Tucson","Arizona",32.35358905,-110.9677647,"Appalachian School of Law",3,3,"Anger","Black","Male"],
+        [2003,"Chicago","Illinois",41.372845,-87.68818145,"Windy City Core Supply Warehouse",7,0,"Unemployement","Other","Male"],
+        [2003,"Cleveland","Ohio",41.67657557,-81.68051502,"Lockheed Martin shooting",7,8,"Racism","White","Male"],
+        [2003,"Meridian","Mississippi",32.376081,-88.68978002,"Case Western Reserve University",1,2,"Terrorism","Asian","Male"],
+        [2004,"Birchwood","Wisconsin",45.65773714,-91.55077175,"Damageplan show at the Alrosa Villa Nightclub",5,7,"Frustration","European","Male"],
+        [2004,"Columbus","Ohio",39.98861445,-82.98904135,"Birchwood, Wisconsin",6,2,"Anger","Asian","Male"],
+        [2005,"Brookfield","Wisconsin",43.20396691,-88.12299758,"Red Lake High School",10,5,"Psycho","Native American","Male"],
+        [2005,"Red Lake","Minnesota",47.87067289,-95.00529009,"Living Church of God",8,4,"Frustration","European","Male"],
+        [2005,"Tyler","Texas",32.3154272,-95.30501087,"Tyler Courthouse",3,4,"Frustration","Other","Male"],
+        [2006,"Essex Junction","Vermont",44.49022039,-73.11400628,"Amish school shooting",6,5,"Terrorism","White","Male"],
+        [2006,"Goleta","California",34.43606107,-119.8593619,"West Nickel Mines Amish School",6,5,"Terrorism","European","Male"],
+        [2006,"Hillsborough","North Carolina",36.04099857,-79.09701201,"Duquesne University",0,5,"Frustration","Black","Male"],
+        [2006,"Lancaster County","Pennsylvania",39.9589,-76.0806,"Orange High School",1,2,"Psycho","Other","Male"],
+        [2006,"Nickel Mines","Pennsylvania",40.04214385,-76.30100872,"Essex Elementary School",2,2,"Psycho","Black","Male"],
+        [2006,"Pittsburgh","Pennsylvania",40.53948548,-79.97631581,"Capitol Hill massacre",7,2,"Frustration","White","Male"],
+        [2006,"Seattle","Washington",47.6299629,-122.3165,"Goleta Post Office",8,0,"Psycho","European","Female"],
+        [2007,"Arvada","Colorado",39.81087474,-105.173715,"Carnation, Washington",6,0,"Domestic dispute","European","Female"],
+        [2007,"Blacksburg","Virginia",37.2295733,-80.4139393,"Mojave High School Bus",0,6,"Terrorism","Black","Male"],
+        [2007,"Carnation","Washington",47.64628742,-121.9088524,"Youth With A Mission and New Life Church",5,5,"Anger","European","Male"],
+        [2007,"Cleveland","Ohio",41.57657557,-81.68051502,"Westroads Mall shooting",9,4,"Terrorism","White","Male"],
+        [2007,"Crandon","Wisconsin",45.5719072,-88.9028922,"South Middle School Football Game",0,4,"Frustration","Black","Male"],
+        [2007,"Gresham","Oregon",45.50216511,-122.4412759,"SuccessTech Academy",1,4,"Frustration","European","Male"],
+        [2007,"Las Vegas","Nevada",36.38931923,-115.3264875,"Crandon shooting",6,1,"Anger","White","Male"],
+        [2007,"Omaha","Nebraska",41.1687317,-95.9378732,"Virginia Tech massacre",32,23,"Terrorism","Asian","Male"],
+        [2007,"Saginaw","Michigan",43.41929117,-83.95032759,"Springwater Trail High School",0,10,"Terrorism","Other","Male"],
+        [2007,"Salt Lake City","Utah",40.77787404,-111.9312168,"Trolley Square",6,4,"Terrorism","European","Male"],
+        [2008,"Conway","Arkansas",35.08130744,-92.43278275,"Covina, California",10,2,"Psycho","European","Male"],
+        [2008,"Covina","California",34.09026669,-117.8819958,"University of Central Arkansas",0,1,"Terrorism","Black","Male"],
+        [2008,"DeKalb","Illinois",41.9294736,-88.7503647,"South Mountain Community College",0,3,"Anger","Black","Male"],
+        [2008,"Henderson","Kentucky",37.84040411,-87.57853755,"Atlantis Plastics",7,1,"Anger","European","Male"],
+        [2008,"Kirkwood","Missouri",38.57889169,-90.42023754,"Northern Illinois University shooting",5,21,"Terrorism","White","Male"],
+        [2008,"Phoenix","Arizona",33.77145875,-112.0904854,"Kirkwood City Hall",6,2,"Terrorism","Black","Male"],
+        [2009,"Binghamton","New York",42.0986867,-75.9179738,"Coffee shop police killings",4,1,"Revenge","Black","Male"],
+        [2009,"Carthage","North Carolina",35.345802,-79.4170543,"Parkland Coffee Shop",5,0,"Revenge","Black","Male"],
+        [2009,"Carthage","North Carolina",35.449856,-79.41381725,"Fort Hood Army Base",13,32,"Terrorism","European","Male"],
+        [2009,"Fort Hood","Texas",31.13814354,-97.77797804,"Binghamton shootings",14,4,"Terrorism","Asian","Male"],
+        [2009,"Geneva","Alabama",31.04367594,-85.8763466,"Carthage nursing home shooting",8,3,"Psycho","White","Male"],
+        [2009,"Lakewood","Washington",47.16267579,-122.5296574,"Rivermark, Santa Clara, California",6,1,"Psycho","Asian","Male"],
+        [2009,"Parkland","Washington",47.155846,-122.437031,"Pinelake Health and Rehab nursing home",8,2,"Psycho","European","Male"],
+        [2009,"Santa Clara","California",37.36463172,-121.9679315,"Geneva County, Alabama",11,6,"Psycho","European","Male"],
+        [2010,"Huntsville","Alabama",34.72827538,-86.6723055,"Hartford Beer Distributor shooting",9,2,"Frustration","Black","Male"],
+        [2010,"Manchester","Connecticut",41.7759324,-72.5214755,"University of Alabama in Huntsville",0,3,"Psycho","European","Female"],
+        [2011,"Carson City","Nevada",39.1637984,-119.7674034,"Salon Meritage",8,1,"Anger","European","Male"],
+        [2011,"Grand Rapids","Michigan",42.96920434,-85.66008902,"IHOP shooting",5,7,"Terrorism","Latino","Male"],
+        [2011,"Opelika","Alabama",32.66240106,-85.37706931,"Residences in Grand Rapids",8,2,"Psycho","Black","Male"],
+        [2011,"Seal Beach","California",33.75432632,-118.0715378,"Southern Union State Community College",1,3,"Anger","European","Male"],
+        [2011,"Tucson","Arizona",32.2517429,-110.926479,"Youngstown State University",1,11,"Anger","Black","Male"],
+        [2011,"Youngstown","Ohio",41.09933958,-80.64631705,"Tucson shooting",6,13,"Terrorism","White","Male"],
+        [2012,"Auburn","Alabama",32.60598014,-85.48989253,"Sandy Hook Elementary School",28,2,"Terrorism","European","Male"],
+        [2012,"Aurora","Colorado",39.709283,-104.823488,"Clackamas Town Center",3,1,"Terrorism","Other","Male"],
+        [2012,"Birmingham","Alabama",33.6582865,-86.79550448,"Azana Spa in Brookfield",4,4,"Psycho","Black","Male"],
+        [2012,"Brookfield","Wisconsin",43.10396691,-88.12299758,"The Spot Nightclub",0,15,"Terrorism","Black","Male"],
+        [2012,"Chardon","Ohio",41.58025541,-81.20812625,"Accent Signage Systems in Minneapolis",7,2,"Unemployement","European","Male"],
+        [2012,"Happy Valley","Oregon",45.44853107,-122.5440133,"Sikh Temple in Wisconsin",7,4,"Racism","European","Male"],
+        [2012,"Miami","Florida",25.89653943,-80.20840397,"Aurora theater shooting",12,70,"Terrorism","White","Male"],
+        [2012,"Minneapolis","Minnesota",44.86358722,-93.26783687,"University Heights Apartments in Auburn",3,3,"Terrorism","Black","Male"],
+        [2012,"Newtown","Connecticut",41.41190846,-73.31196267,"Cafe in Seattle",6,1,"Psycho","European","Male"],
+        [2012,"Norcross","Georgia",33.9412127,-84.2135309,"Seattle cafe shooting",6,1,"Psycho","White","Male"],
+        [2012,"Oak Creek","Wisconsin",42.88027442,-87.90087079,"North Tulsa, Oklahoma",3,2,"Racism","European","Male"],
+        [2012,"Oakland","California",37.8043808,-122.2708166,"Oikos University killings",7,3,"Terrorism","Asian","Male"],
+        [2012,"Seattle","Washington",47.72199575,-122.323646,"Chardon High School",3,3,"Terrorism","European","Male"],
+        [2012,"Seattle","Washington",47.8238321,-122.3300624,"Su Jung Health Sauna shooting",5,0,"Anger","Asian","Male"],
+        [2012,"Tulsa","Oklahoma",36.13543238,-95.91316117,"Ensley Birmingham",5,0,"Terrorism","Black","Male"],
+        [2013,"Dallas","Texas",32.79480596,-96.76631094,"Centennial Hill Bar & Grill",3,5,"Anger","Black","Male"],
+        [2013,"Federal Way","Washington",47.30909721,-122.3357553,"Los Angeles International Airport (LAX)",1,3,"Anger","European","Male"],
+        [2013,"Hialeah","Florida",25.8670105,-80.29146268,"Sparks Middle School",2,2,"Psycho","Other","Male"],
+        [2013,"Irvine","California",33.67803464,-117.773628,"Washington Navy Yard",13,3,"Terrorism","Black","Male"],
+        [2013,"Ladera Ranch","California",33.54961059,-117.6415707,"Oklahoma City Residence",4,0,"Psycho","European","Male"],
+        [2013,"Los Angeles","California",34.17622092,-118.5399542,"Homes in Desoto and Dallas",4,4,"Psycho","Black","Male"],
+        [2013,"Manchester","Illinois",39.54231335,-90.33029852,"Ross Township Supervisor Council Meeting",3,3,"Psycho","European","Male"],
+        [2013,"Mohawk","New York",43.0104011,-75.0075119,"Hialeah apartment shooting",7,0,"Terrorism","Latino","Male"],
+        [2013,"Montgomery","Alabama",32.34729571,-86.26730242,"Santa Monica College",6,3,"Psycho","European","Male"],
+        [2013,"Oklahoma City","Oklahoma",35.46779189,-97.5191631,"Village of Manchester in Illinois",7,1,"Anger","European","Male"],
+        [2013,"Phoenix","Arizona",33.67145875,-112.0904854,"Pinewood Village Apartments",5,0,"Anger","Black","Male"],
+        [2013,"Salisbury ","Pennsylvania",39.75344279,-79.08435956,"Mohawk and Herkimer Villages in New York",5,2,"Psycho","European","Male"],
+        [2013,"Santa Monica","California",34.02319149,-118.4815644,"Ladera Ranch, Santa Ana, Tustin and Orange",4,3,"Psycho","European","Male"],
+        [2013,"South Valley","New Mexico",35.15290522,-106.7791378,"Los Angeles Police Department",4,2,"Anger","Black","Male"],
+        [2013,"Sparks","Nevada",39.54058388,-119.748291,"Phoenix Law Firm",3,1,"Psycho","European","Male"],
+        [2013,"Washington D.C.","Washington",38.90480894,-77.01629717,"South Valley Residence",5,0,"Psycho","Other","Male"],
+        [2014,"Albuquerque","New Mexico",35.529052,-106.7791378,"Pennsburg, Souderton, Lansdale, Harleysville",7,1,"Psycho","European","Male"],
+        [2014,"Alturas","California",41.4911123,-120.549091,"Morgantown",5,0,"Psycho","European","Male"],
+        [2014,"Fort Hood","Texas",31.235001,-97.741314,"Florida State University",1,3,"Terrorism","Black","Male"],
+        [2014,"Kennesaw","Georgia",34.02529674,-84.61766831,"Marysville-Pilchuck High School",5,1,"Anger","Native American","Male"],
+        [2014,"Killeen","Texas",31.37925506,-97.73392317,"Albuquerque Auto Shop",2,3,"Anger","Other","Male"],
+        [2014,"Las Vegas","Nevada",36.28931923,-115.3264875,"Bourbon Street New Orleans",1,9,"Anger","Other","Male"],
+        [2014,"Marysville","Washington",48.04802409,-122.1359622,"Nellis Plaza",5,0,"Psycho","European","Female"],
+        [2014,"Morgantown","West Virginia",39.63400851,-79.94839325,"Seattle Pacific University",1,2,"Terrorism","Other","Male"],
+        [2014,"New Orleans","Louisiana",30.1687242,-89.93147412,"Isla Vista mass murder",6,13,"Psycho","White","Male"],
+        [2014,"Pennsburg","Pennsylvania",40.39359306,-75.49640881,"Kennesaw FedEx",1,6,"Terrorism","European","Male"],
+        [2014,"San Francisco","California",37.75457839,-122.4424343,"Fort Hood shooting 2",3,12,"Psycho","Latino","Male"],
+        [2014,"Santa Barbara","California",34.420831,-119.69819,"Fort Hood",4,16,"Psycho","Other","Male"],
+        [2014,"Seattle","Washington",47.62199575,-122.323646,"San Francisco Tenderloin",0,8,"Anger","Black","Male"],
+        [2014,"Tallahassee","Florida",30.4549394,-84.25264151,"Cedarville Rancheria Tribe",4,2,"Psycho","Native American","Female"],
+        [2015,"Birmingham","Alabama",33.5582865,-86.79550448,"Omaha, Nebraska",2,3,"Terrorism","Black","Male"],
+        [2015,"Bristol","Tennessee",36.55605824,-82.21429551,"San Bernardino mass shooting",14,21,"Terrorism","Other","Female"],
+        [2015,"Brookhaven","Mississippi",31.58036482,-90.44323475,"San Bernardino, California",16,21,"Terrorism","Asian","Female"],
+        [2015,"Chapel Hill","North Carolina",35.92681467,-79.03850407,"Planned Parenthood clinic",3,9,"Revenge","White","Male"],
+        [2015,"Charleston","South Carolina",32.788387,-79.933143,"Columbus, Ohio",4,1,"Revenge","European","Male"],
+        [2015,"Charlotte","North Carolina",35.226354,-80.836788,"Minneapolis, Minnesota",0,5,"Racism","European","Male"],
+        [2015,"Chattanooga","Tennessee",35.09318123,-85.23676751,"Tennessee Colony, Texas",6,0,"Revenge","European","Male"],
+        [2015,"Clarkesville","Georgia",34.61025711,-83.52918091,"Jacksonville, Florida",4,1,"Domestic dispute","Black","Male"],
+        [2015,"Clearbrook (Greenwood)","Minnesota",47.69618799,-95.42844094,"Waycross, GA",1,2,"Psycho","Black","Male"],
+        [2015,"Cleveland","Ohio",41.47657557,-81.68051502,"Oakland, Maine",4,0,"Domestic dispute","Unknown","Male"],
+        [2015,"Colerain Township","Ohio",39.253268,-84.599655,"Colorado Springs",4,0,"Terrorism","European","Male"],
+        [2015,"Colorado Springs","Colorado",38.733882,-104.821363,"Colerain Township, Ohio",2,1,"Revenge","European","Male"],
+        [2015,"Colorado Springs","Colorado",38.86730659,-104.7572279,"Northern Arizona University at Flagstaff Campus",1,3,"Anger","European","Male"],
+        [2015,"Columbus","Ohio",39.8861445,-82.98904135,"Umpqua Community College",10,7,"Terrorism","Other","Male"],
+        [2015,"Conyers","Georgia",33.56086267,-84.02688527,"Inglis, Florida",3,1,"Anger","European","Male"],
+        [2015,"Cottonwood","Alabama",31.0549687,-85.30100084,"Hill Haven Event Center (Formerly Club CJ's)",0,10,"Unemployement","Black","Male"],
+        [2015,"Daytona Beach","Florida",29.19313443,-81.10173014,"Platte, South Dakota",6,0,"Unemployement","European","Male"],
+        [2015,"Decatur","Illinois",39.85566372,-88.93346458,"Clearbrook (Greenwood), Minnesota",5,0,"Unemployement","European","Male"],
+        [2015,"Deer Lodge","Montana",46.39761858,-112.7329333,"Bristol, Tennessee",3,1,"Psycho","European","Male"],
+        [2015,"Douglasville","Georgia",33.71059292,-84.71564276,"Virginia WDBJ live TV interview shooting",3,1,"Psycho","Black","Male"],
+        [2015,"Flagstaff","Arizona",35.1725658,-111.6585435,"Parking lot near Boys and Girls Club",3,4,"Unemployement","Black","Male"],
+        [2015,"Gates","New York",43.15693027,-77.69300856,"Houston, Texas",8,0,"Revenge","Black","Male"],
+        [2015,"Greenville","Georgia",33.02912644,-84.7143335,"Grand 16 Theatre, Louisiana",3,9,"Unemployement","European","Male"],
+        [2015,"Houston","Texas",29.79705548,-95.36763856,"Suwanee",4,1,"Psycho","European","Male"],
+        [2015,"Indianapolis","Indiana",39.77725479,-86.14635359,"Amnicola Training Center, Chattanooga",5,3,"Terrorism","European","Male"],
+        [2015,"Inglis","Florida",29.03270634,-82.65919302,"River Forest",2,3,"Domestic dispute","Unknown","Male"],
+        [2015,"Jacksonville","Florida",30.43216122,-81.67576993,"Boom Boom Room",0,4,"Anger","Black","Male"],
+        [2015,"Killeen","Texas",31.17925506,-97.73392317,"Charleston Church Shooting",9,1,"Terrorism","White","Male"],
+        [2015,"Killeen","Texas",31.27925506,-97.73392317,"Miami Gardens",0,4,"Unemployement","Black","Male"],
+        [2015,"King","North Carolina",36.27617912,-80.35501402,"Trestle Trail bridge shooting",3,1,"Racism","Latino","Male"],
+        [2015,"Lafayette","Louisiana",30.21233538,-92.0316453,"Deer Lodge",5,0,"Racism","European","Male"],
+        [2015,"LaGrange","Georgia",33.03607062,-85.0287065,"Cleveland",3,1,"Psycho","Unknown","Male"],
+        [2015,"Little Water","New Mexico",36.44329,-108.723281,"Conyers",3,2,"Psycho","European","Male"],
+        [2015,"Memphis","Tennessee",35.34528976,-89.97734924,"Club Maxey's",1,4,"Revenge","Black","Male"],
+        [2015,"Menasha","Wisconsin",44.302208,-88.446497,"Tucson",5,0,"Psycho","Unknown","Male"],
+        [2015,"Menasha","Wisconsin",44.20455909,-88.4484585,"Annual motorcycle event in Newark",1,3,"Terrorism","Black","Male"],
+        [2015,"Mesa","Arizona",33.42268696,-111.8163202,"Fox Cities Trestle Trail bridge over Little Lake Butte des Morts",4,1,"Racism","Unknown","Male"],
+        [2015,"Miami Gardens","Florida",25.94326707,-80.24253243,"Milwaukee",2,3,"Domestic dispute","Unknown","Male"],
+        [2015,"Milwaukee","Wisconsin",43.06420322,-87.96724385,"Gates Pub",1,6,"Terrorism","Black","Male"],
+        [2015,"Minneapolis","Minnesota",44.96358722,-93.26783687,"Killeen",2,3,"Racism","Black","Male"],
+        [2015,"Monroeville","Pennsylvania",40.4257455,-79.76092565,"Phoenix",5,0,"Racism","Other","Male"],
+        [2015,"Morven","North Carolina",34.86379864,-79.9996781,"Rome",1,3,"Psycho","Black","Male"],
+        [2015,"Moscow","Idaho",46.73059479,-116.9990042,"Indianapolis",0,5,"Psycho","Unknown","Male"],
+        [2015,"New Port Richey","Florida",28.24653304,-82.71690259,"Daytona Beach",0,4,"Psycho","Black","Male"],
+        [2015,"New York City","New York",40.68996411,-73.8720502,"Tulsa",4,0,"Psycho","Asian","Male"],
+        [2015,"Newark","New Jersey",40.73169648,-74.18417699,"Panama City Beach",0,7,"Psycho","Black","Male"],
+        [2015,"Oakland","Maine",44.54994725,-69.70782299,"Little Water",2,2,"Psycho","Unknown","Male"],
+        [2015,"Omaha","Nebraska",41.3638,-96.0814,"Mesa",1,5,"Psycho","European","Male"],
+        [2015,"Omaha","Nebraska",41.265922,-96.05381421,"Cottonwood",3,1,"Psycho","European","Male"],
+        [2015,"Panama City Beach","Florida",30.22540212,-85.87371301,"Brookhaven",2,3,"Psycho","Black","Male"],
+        [2015,"Phoenix","Arizona",33.57145875,-112.0904854,"Tarboro",4,0,"Terrorism","Black","Male"],
+        [2015,"Platte","South Dakota",43.38682722,-98.84357239,"Birmingham's Washington Park",1,2,"Psycho","Black","Male"],
+        [2015,"River Forest","Illinois",41.89499946,-87.81941392,"Tyrone",8,1,"Psycho","European","Male"],
+        [2015,"Roanoke","Virginia",37.27823366,-79.95816104,"Charlotte",3,0,"Psycho","Other","Male"],
+        [2015,"Rochester","New York",43.1696837,-77.614337,"Clarkesville",3,2,"Frustration","European","Male"],
+        [2015,"Rome","Georgia",34.26779152,-85.18822422,"Killeen",4,1,"Frustration","Black","Male"],
+        [2015,"Roseburg","Oregon",43.22205555,-123.3522367,"Chapel Hill",3,0,"Anger","European","Male"],
+        [2015,"San Bernardino","California",34.108345,-117.289765,"Moon Lake",3,1,"Terrorism","White","Female"],
+        [2015,"San Bernardino","California",34.20973446,-117.2942444,"Monroeville Macy's",0,3,"Frustration","Black","Male"],
+        [2015,"Suwanee","Georgia",34.05057545,-84.06872262,"Douglasville",5,2,"Psycho","Black","Male"],
+        [2015,"Syracuse","New York",43.04093416,-76.14376763,"King, North Carolina",4,0,"Psycho","European","Male"],
+        [2015,"Tarboro","North Carolina",35.90434471,-77.55639964,"McAvan's Pub",0,6,"Revenge","Black","Male"],
+        [2015,"Tennessee Colony","Texas",31.8076,-95.8069,"LaGrange",5,0,"Psycho","European","Male"],
+        [2015,"Tucson","Arizona",32.15358905,-110.9677647,"Queens",4,1,"Psycho","Black","Male"],
+        [2015,"Tulsa","Oklahoma",36.23543238,-95.91316117,"Omaha",3,5,"Terrorism","Black","Male"],
+        [2015,"Tyrone","Missouri",37.204442,-91.876583,"Moscow",3,1,"Psycho","Asian","Male"],
+        [2015,"Waycross","Georgia",31.21094544,-82.35793452,"Memphis",0,5,"Anger","Black","Male"],
+        [2016,"Albuquerque","New Mexico",35.385334,-106.605553,"Cascade Mall shooting",5,0,"Terrorism","White","Male"],
+        [2016,"Albuquerque","New Mexico",35.485334,-106.605553,"Baton Rouge police shooting",3,3,"Anger","Black","Male"],
+        [2016,"Atlanta","Georgia",33.748995,-84.387982,"Dallas police shooting",5,11,"Racism","Black","Male"],
+        [2016,"Baton Rouge","Louisiana",30.458283,-91.14032,"Orlando nightclub massacre",49,53,"Anger","Other","Male"],
+        [2016,"Belfair","Washington",47.5033,-122.931,"Ferguson, MO Drive by",0,4,"Anger","White","Female"],
+        [2016,"Belfair","Washington",47.451459,-122.826946,"Forestville, Maryland Drive-by",1,4,"Anger","White","Female"],
+        [2016,"Branson","Missouri",38.77144,-90.370949,"Halifax County, VA",0,6,"Anger","Black","Male"],
+        [2016,"Burlington","Washington",36.281187,-94.148752,"Tire-Slashing Revenge escalation",0,4,"Frustration","Black","Male"],
+        [2016,"Caroline County","Virginia",38.044556,-77.286488,"Chicago Rap video Shootout",1,4,"Anger","White","Female"],
+        [2016,"Chelsea","Massachusetts",42.391764,-71.032828,"Texas family murder-suicide",4,0,"Domestic dispute","European","Male"],
+        [2016,"Chesapeake","Virginia",36.7921,-76.3293,"Alabama highway random shooting",1,4,"Psycho","European","Male"],
+        [2016,"Chicago","Illinois",41.178114,-87.629798,"Long Beach Street murder",0,3,"Terrorism","White","Female"],
+        [2016,"Chicago","Illinois",41.278114,-87.629798,"Albuquerque, NM House party shooting",0,4,"Anger","European","Male"],
+        [2016,"Dallas","Texas",32.696664,-96.796988,"Memphis, TN gas station shooting",0,4,"Anger","White","Female"],
+        [2016,"Detroit","Michigan",42.431427,-83.045754,"Chicago Birthday Party Bus Shooting",0,5,"Psycho","White","Female"],
+        [2016,"Detroit ","Michigan",42.331427,-83.045754,"Albuquerque, NM Family restaurant shooting",3,1,"Psycho","Asian","Male"],
+        [2016,"Elberton","Georgia",34.111223,-82.867084,"Richmond, Virginia",2,2,"Frustration","Black","Male"],
+        [2016,"Ferguson","Missouri",38.744217,-90.305391,"Louisburg, North Carolina",3,0,"Terrorism","Black","Male"],
+        [2016,"Forestville","Maryland",38.845113,-76.874972,"Lawrenceburg, Tennessee",2,2,"Domestic dispute","White","Male"],
+        [2016,"Fort Worth","Texas",29.785785,-95.824396,"Greenhill, AL Family murder-suicide",2,2,"Domestic dispute","European","Male"],
+        [2016,"Galveston","Texas",29.209684,-99.786168,"Sherman, Texas Family Murder-Suicide",4,0,"Domestic dispute","White","Male"],
+        [2016,"Geneva","Alabama",34.16204,-86.475543,"Louisville, KY Family Murder-Suicide",4,0,"Domestic dispute","European","Male"],
+        [2016,"Glendale","Arizona",33.448377,-112.074037,"Plantation, Florida",1,4,"Psycho","White","Female"],
+        [2016,"Glendale","Arizona",33.538652,-112.185987,"Wetumpka Drive-by",2,2,"Terrorism","Black","Male"],
+        [2016,"Gloucester County","Virginia",37.40264,-76.458559,"Atlanta Nightclub shooting",0,4,"Anger","White","Male"],
+        [2016,"Greenhill","Alabama",34.759257,-86.602493,"Florida Family celebration ends in shooting",0,4,"Psycho","White","Male"],
+        [2016,"Halifax County","Virginia",36.765971,-78.928344,"Elberton, Georgia murder-suicide",2,2,"Domestic dispute","White","Male"],
+        [2016,"Hesston","Kansas",38.138344,-97.431427,"Trenton, NJ sidewalk shooting",0,5,"Psycho","White","Male"],
+        [2016,"Hesston","Kansas",38.21368,-97.4268,"Detroit Drive-by",2,2,"Psycho","White","Male"],
+        [2016,"Houston ","Texas",29.760427,-95.369803,"Pittsburgh, Pennsylvania",6,3,"Terrorism","White","Male"],
+        [2016,"Iuka","Mississippi",34.7404,-88.1383,"Wilkinsburg BBQ cookout shootout",5,3,"Terrorism","White","Male"],
+        [2016,"Jacksonville","Florida",27.950575,-82.457178,"Kansas City, Kansas",5,0,"Psycho","Other","Male"],
+        [2016,"Kalamazoo ","Florida",42.291707,-85.587229,"Lafayette, LA drive by",0,4,"Psycho","White","Male"],
+        [2016,"Kalamazoo County","Michigan",42.227835,-85.520024,"Kansas City Home Invasion",4,0,"Domestic dispute","Other","Male"],
+        [2016,"Kansas City","Kansas",39.214053,-94.627464,"Chelsea, MA empty apartment party shooting",1,6,"Terrorism","Other","Male"],
+        [2016,"Kansas City","Kansas",39.114053,-94.627464,"Roswell, GA Hookah shootout",0,4,"Anger","Black","Male"],
+        [2016,"Lafayette","Louisiana",30.32409,-92.019843,"Wichita Nightclub shooting",0,4,"Anger","White","Male"],
+        [2016,"Lakeland","Florida",43.16103,-77.610922,"Detroit Strip Club Shootout",0,5,"Anger","Black","Male"],
+        [2016,"Lakeland","Florida",28.039465,-81.949804,"Riverside restaurant shooting",1,3,"Domestic dispute","Other","Male"],
+        [2016,"Lansing","Michigan",43.201126,-86.238946,"Woodbridge, Virginia",2,2,"Domestic dispute","Black","Male"],
+        [2016,"Lawrenceburg","Tennessee",35.242302,-87.334739,"Belfair, Washington",5,0,"Domestic dispute","European","Male"],
+        [2016,"Long Beach","California",33.77005,-118.193739,"Excel Industries mass shooting",3,14,"Domestic dispute","Black","Male"],
+        [2016,"Los Angeles","California",34.052234,-118.243685,"Hesston, Kansas",4,14,"Psycho","Black","Male"],
+        [2016,"Los Angeles ","Nevada",34.052234,-118.243685,"Belfair, WA Family murder-suicide",5,0,"Psycho","European","Male"],
+        [2016,"Louisburg","North Carolina",36.099039,-78.301106,"Arizona Family Murder",5,0,"Psycho","European","Male"],
+        [2016,"Louisville","Kentucky",38.352665,-85.758456,"Missouri Highway shooting",1,3,"Domestic dispute","Black","Male"],
+        [2016,"Memphis","Tennessee",35.249534,-90.04898,"Houston Drive-by",0,5,"Domestic dispute","White","Male"],
+        [2016,"Memphis","Tennessee",35.149534,-90.04898,"Kalamazoo shooting spree",6,2,"Terrorism","White","Male"],
+        [2016,"Miami","Florida",26.690628,-81.872308,"Iuka, Mississippi",2,3,"Domestic dispute","European","Male"],
+        [2016,"Naples","Florida",30.754181,-86.572799,"Florida Hookah Bar Shooting",1,3,"Anger","White","Male"],
+        [2016,"New Orleans ","Louisiana",29.951066,-90.071532,"Kalamazoo Uber Driver Spree Killing",6,2,"Terrorism","European","Male"],
+        [2016,"Orlando","Florida",28.538335,-81.379236,"Vallejo, CA car shooting",2,2,"Terrorism","White","Male"],
+        [2016,"Orlando","Florida",28.634541,-81.4646,"Michigan school shooting",0,3,"Psycho","Black","Male"],
+        [2016,"Perris","California",33.782519,-117.228648,"Orlando, Florida",2,10,"Terrorism","Other","Male"],
+        [2016,"Pittsburgh","Pennsylvania",40.440625,-79.995886,"Nightclub fight turns into shootout",1,7,"Anger","White","Male"],
+        [2016,"Plantation","Florida",26.127586,-80.233104,"Tampa, FL Strip club shooting",2,6,"Terrorism","White","Male"],
+        [2016,"Richmond","Virginia",37.540725,-77.436048,"Los Angeles, CA street shooting",1,3,"Terrorism","White","Male"],
+        [2016,"Riverside","California",33.8397197,-117.48548,"Texas teen commits family murder suicide",4,0,"Psycho","European","Male"],
+        [2016,"Rockville","Maryland",39.290385,-76.612189,"New Orleans gas station shoot-out",0,3,"Anger","Black","Male"],
+        [2016,"Roswell","Georgia",34.023243,-84.361556,"Glendale, AZ House Party shooting",3,5,"Anger","White","Male"],
+        [2016,"Sherman","Texas",33.635662,-96.60888,"Caroline County, VA Family Murder Suicide",2,2,"Psycho","White","Male"],
+        [2016,"Tampa","Florida",27.950575,-82.457178,"Chesapeake, Virginia",6,0,"Psycho","European","Male"],
+        [2016,"Trenton","New Jersey",40.217053,-74.742938,"Perris, CA Mexican restaurant shooting",1,4,"Terrorism","Unknown","Male"],
+        [2016,"Vallejo","California",38.104086,-122.256637,"Florida family murder",3,0,"Terrorism","European","Male"],
+        [2016,"Wetumpka","Alabama",32.543745,-86.211913,"Los Angeles Drive-by",2,2,"Terrorism","Unknown","Male"],
+        [2016,"Wichita","Kansas",37.687176,-97.330053,"Gloucester County, VA, House Party",1,3,"Terrorism","Black","Male"],
+        [2016,"Wilkinsburg","Pennsylvania",40.441736,-79.881994,"Wilmington, DE robbery",1,4,"Terrorism","Black","Male"],
+        [2016,"Wilmington","Delaware",39.739072,-75.539788,"Roadside in Memphis, Tennessee",1,3,"Terrorism","Unknown","Male"],
+        [2016,"Woodbridge","Virginia",38.6697,-77.3524,"Residence in Lakeland, Florida",3,1,"Terrorism","Black","Male"],
+        [2017,"Edgewood","Maryland",39.418719,-76.294402,"Texas church mass shooting",26,20,"Anger","White","Male"],
+        [2017,"Fort Lauderdale","Florida",26.222439,-80.137317,"Walmart shooting in suburban Denver",3,0,"Anger","White","Male"],
+        [2017,"Fresno","California",36.746842,-119.772587,"Edgewood businees park shooting",3,3,"Anger","Black","Male"],
+        [2017,"Kirkersville","Ohio",39.959508,-82.595718,"Las Vegas Strip mass shooting",59,527,"Anger","White","Male"],
+        [2017,"Las Vegas","Nevada",36.181271,-115.134132,"San Francisco UPS shooting",3,2,"Anger","Asian","Male"],
+        [2017,"Orlando","Florida",28.438335,-81.379236,"Pennsylvania supermarket shooting",3,0,"Terrorism","White","Male"],
+        [2017,"San Francisco","California",37.6574929,-122.419416,"Florida awning manufacturer shooting",5,0,"Unemployement","White","Male"],
+        [2017,"Sutherland Springs","Texas",29.273296,-98.056673,"Rural Ohio nursing home shooting",3,0,"Anger","White","Male"],
+        [2017,"Thornton","Colorado",39.868041,-104.971924,"Fresno downtown shooting",3,0,"Racism","Black","Male"],
+        [2017,"Tunkhannock","Pennsylvania",41.538688,-75.946588,"Fort Lauderdale airport shooting",5,6,"Terrorism","Latino","Male"]
+    ];
+
+    var map = L.map('map').setView([35.877742,-97.380979], 4);
+    mapLink = 
+        '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+    L.tileLayer(
+        'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 15,
+        minZoom: 3,
+        }).addTo(map);
+
+    for (var i = 0; i < planes.length; i++) {
+        var list = "<dl><dt>City : "+ planes[i][1] +"</dt>"
+           + "<dt>State : "+ planes[i][2] +"</dt>"
+           + "<dt>Year : "+ planes[i][0]+"</dt>"
+           + "<dt>Cause : "+ planes[i][8]+"</dt>"
+           + "<dt>Shooter's Race/Gender : "+ planes[i][9]+"/"+planes[i][10]+"</dt>"
+           + "<dt>Killed : "+ planes[i][6]+"</dt>"
+           + "<dt>Injured : "+ planes[i][7]+"</dt>";
+
+        marker = new L.marker([planes[i][3],planes[i][4]])
+            .bindPopup(list)
+            .addTo(map);
+    }
+               
+    </script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" 
+        integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" 
+        integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+        
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+</body>
+</html>
